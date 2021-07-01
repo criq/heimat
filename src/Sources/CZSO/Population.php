@@ -2,10 +2,14 @@
 
 namespace Heimat\Sources\CZSO;
 
-class SettlementPopulation
+class Population
 {
-	public static function getData(int $year) : array
+	public static function getTableUrls(?int $year = null) : array
 	{
+		if (!$year) {
+			$year = date('Y');
+		}
+
 		$url = "https://www.czso.cz/csu/czso/pocet-obyvatel-v-obcich-k-11" . $year;
 		$src = \Katu\Cache\URL::get($url, '1 day');
 		$dom = \Katu\Tools\DOM\DOM::crawlHtml($src);
