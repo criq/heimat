@@ -1,0 +1,13 @@
+{
+	"name": "jabli/heimat",
+	"description": "geo stat utility",
+	"type": "library",
+	"autoload": {
+		"psr-4": {
+			"Naam\\": "src/"
+		}
+	},
+	"require": {
+		"jabli/katu": "v2.x-dev"
+	}
+}
