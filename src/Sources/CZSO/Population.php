@@ -2,6 +2,8 @@
 
 namespace Heimat\Sources\CZSO;
 
+use Katu\Types\TURL;
+
 class Population
 {
 	public static function getTableUrls(?int $year = null) : array
@@ -19,7 +21,7 @@ class Population
 				'title' => $e->filter('td')->eq(0)->text(),
 				'urls' => $e->filter('td')->eq(1)->filter('a')->each(function ($e) {
 					if (preg_match('/Excel/', $e->text())) {
-						return $e->attr('href');
+						return new TURL($e->attr('href'));
 					}
 				}),
 			];
@@ -32,5 +34,16 @@ class Population
 		$urls = array_filter($urls);
 
 		return $urls;
+	}
+
+	public static function getTableUrlByTitle(string $title, ?int $year = null) : ?TURL
+	{
+		foreach (Population::getTableUrls($year) as $key => $value) {
+			if (preg_match("/$title/", $key)) {
+				return $value;
+			}
+		}
+
+		return null;
 	}
 }
