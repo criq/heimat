@@ -35,19 +35,28 @@ class LAU1 extends \Heimat\SchemaObject
 
 	public function getNUTS3() : NUTS3
 	{
-		$array = $this->getWikidataArticleJSON()->getArray()['claims']['P131'];
-		usort($array, function ($a, $b) {
-			$aDatetime = new \App\Classes\DateTime($a['qualifiers']['P580'][0]['datavalue']['value']['time']);
-			$bDatetime = new \App\Classes\DateTime($b['qualifiers']['P580'][0]['datavalue']['value']['time']);
+		try {
+			$array = $this->getWikidataArticleJSON()->getArray()['claims']['P131'];
+			usort($array, function ($a, $b) {
+				$aDatetime = new \App\Classes\DateTime($a['qualifiers']['P580'][0]['datavalue']['value']['time']);
+				$bDatetime = new \App\Classes\DateTime($b['qualifiers']['P580'][0]['datavalue']['value']['time']);
 
-			return $aDatetime > $bDatetime ? -1 : 1;
-		});
+				return $aDatetime > $bDatetime ? -1 : 1;
+			});
 
-		$articleTitle = $array[0]['mainsnak']['datavalue']['value']['id'];
-		$articleJSON = \Heimat\Sources\Wikidata\Article::getJSON($articleTitle);
+			$articleTitle = $array[0]['mainsnak']['datavalue']['value']['id'];
+			$articleJSON = \Heimat\Sources\Wikidata\Article::getJSON($articleTitle);
 
-		$nuts3 = $articleJSON->getArray()['claims']['P605'][0]['mainsnak']['datavalue']['value'];
+			$nuts3 = $articleJSON->getArray()['claims']['P605'][0]['mainsnak']['datavalue']['value'];
+			if (preg_match('/CZ[0-9]{3}/', $nuts3)) {
+				return new NUTS3($nuts3);
+			}
 
-		return new NUTS3($nuts3);
+			throw new \Exception;
+		} catch (\Throwable $e) {
+			$nuts3 = $this->getWikidataArticleJSON()->getArray()['claims']['P605'][0]['mainsnak']['datavalue']['value'];
+
+			return new NUTS3($nuts3);
+		}
 	}
 }

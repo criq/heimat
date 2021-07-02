@@ -41,11 +41,29 @@ class LAU2 extends \Heimat\SchemaObject
 
 	public function getLAU1() : LAU1
 	{
-		$articleTitle = $this->getWikidataArticleJSON()->getArray()['claims']['P131'][0]['mainsnak']['datavalue']['value']['id'];
-		$articleJSON = \Heimat\Sources\Wikidata\Article::getJSON($articleTitle);
+		try {
+			$array = $this->getWikidataArticleJSON()->getArray()['claims']['P131'];
+			usort($array, function ($a, $b) {
+				$aDatetime = new \App\Classes\DateTime($a['qualifiers']['P580'][0]['datavalue']['value']['time']);
+				$bDatetime = new \App\Classes\DateTime($b['qualifiers']['P580'][0]['datavalue']['value']['time']);
 
-		$lau1 = $articleJSON->getArray()['claims']['P782'][0]['mainsnak']['datavalue']['value'];
+				return $aDatetime > $bDatetime ? -1 : 1;
+			});
 
-		return new LAU1($lau1);
+			$articleTitle = $array[0]['mainsnak']['datavalue']['value']['id'];
+			$articleJSON = \Heimat\Sources\Wikidata\Article::getJSON($articleTitle);
+
+			$lau1 = $articleJSON->getArray()['claims']['P782'][0]['mainsnak']['datavalue']['value'];
+
+			return new LAU1($lau1);
+		} catch (\Throwable $e) {
+			foreach ($this->getWikidataArticleJSON()->getArray()['claims']['P782'] as $claim) {
+				if (($claim['qualifiers']['P3831'][0]['datavalue']['value']['id'] ?? null) == 'Q11618279') {
+					$lau1 = $claim['mainsnak']['datavalue']['value'];
+
+					return new LAU1($lau1);
+				}
+			}
+		}
 	}
 }
