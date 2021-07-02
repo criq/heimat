@@ -6,7 +6,7 @@ use Katu\Types\TJSON;
 
 abstract class SchemaObject
 {
-	abstract public function getWikidataClass() : string;
+	abstract public static function getWikidataClass() : string;
 
 	public function __construct(string $reference, ?string $name = null, ?array $data = null)
 	{
@@ -58,7 +58,7 @@ abstract class SchemaObject
 				foreach ($articles as $article) {
 					$json = \Heimat\Sources\Wikidata\Article::getJSON($article['title']);
 					foreach ($json->getArray()['claims']['P31'] as $claim) {
-						if ($this->getWikidataClass() == $claim['mainsnak']['datavalue']['value']['id']) {
+						if (static::getWikidataClass() == $claim['mainsnak']['datavalue']['value']['id']) {
 							return $article['title'];
 						}
 					}
