@@ -4,7 +4,7 @@ namespace Heimat\Sources\Google;
 
 class Search
 {
-	public static function getQuery(string $query) : array
+	public static function getQueryResult(string $query) : array
 	{
 		return \Katu\Cache\General::get([__CLASS__, __FUNCTION__], '1 week', function ($query) {
 			$curl = new \Curl\Curl;
