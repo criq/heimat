@@ -32,4 +32,22 @@ class LAU1 extends \Heimat\SchemaObject
 
 		return $array;
 	}
+
+	public function getNUTS3() : NUTS3
+	{
+		$array = $this->getWikidataArticleJSON()->getArray()['claims']['P131'];
+		usort($array, function ($a, $b) {
+			$aDatetime = new \App\Classes\DateTime($a['qualifiers']['P580'][0]['datavalue']['value']['time']);
+			$bDatetime = new \App\Classes\DateTime($b['qualifiers']['P580'][0]['datavalue']['value']['time']);
+
+			return $aDatetime > $bDatetime ? -1 : 1;
+		});
+
+		$articleTitle = $array[0]['mainsnak']['datavalue']['value']['id'];
+		$articleJSON = \Heimat\Sources\Wikidata\Article::getJSON($articleTitle);
+
+		$nuts3 = $articleJSON->getArray()['claims']['P605'][0]['mainsnak']['datavalue']['value'];
+
+		return new NUTS3($nuts3);
+	}
 }

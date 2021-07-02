@@ -33,4 +33,19 @@ class LAU2 extends \Heimat\SchemaObject
 
 		return $array;
 	}
+
+	public function getWikidataReference() : string
+	{
+		return 'CZ' . $this->getReference();
+	}
+
+	public function getLAU1() : LAU1
+	{
+		$articleTitle = $this->getWikidataArticleJSON()->getArray()['claims']['P131'][0]['mainsnak']['datavalue']['value']['id'];
+		$articleJSON = \Heimat\Sources\Wikidata\Article::getJSON($articleTitle);
+
+		$lau1 = $articleJSON->getArray()['claims']['P782'][0]['mainsnak']['datavalue']['value'];
+
+		return new LAU1($lau1);
+	}
 }

@@ -2,7 +2,6 @@
 
 namespace Heimat;
 
-use Katu\Files\Formats\JSON;
 use Katu\Types\TJSON;
 
 class SchemaObject
@@ -24,45 +23,65 @@ class SchemaObject
 		return $this->name;
 	}
 
+	public function getWikidataReference() : string
+	{
+		return $this->getReference();
+	}
+
+	public function getWikidataArticles() : ?array
+	{
+		try {
+			return \Katu\Cache\General::get([__CLASS__, __FUNCTION__], '1 week', function ($reference) {
+				$res = \Heimat\Sources\Wikidata\Article::getSearchResult('"' . $reference . '"');
+
+				return $res['query']['search'];
+			}, $this->getWikidataReference());
+		} catch (\Throwable $e) {
+			return null;
+		}
+	}
+
 	public function getWikidataArticleTitle() : ?string
 	{
 		try {
-			return \Katu\Cache\General::get([__CLASS__, __FUNCTION__], '1 week', function ($reference) {
-				$curl = new \Curl\Curl;
-				$res = $curl->get('https://www.wikidata.org/w/api.php', [
-					'action' => 'query',
-					'format' => 'json',
-					'list' => 'search',
-					'srsearch' => '"' . $reference . '"',
-				]);
-				$res = \Katu\Files\Formats\JSON::decodeAsArray(\Katu\Files\Formats\JSON::encode($res));
+			$object = $this;
 
-				return $res['query']['search'][0]['title'] ?: null;
-			}, $this->getReference());
+			return \Katu\Cache\General::get([__CLASS__, __FUNCTION__], '1 week', function ($reference) use ($object) {
+				$articles = $object->getWikidataArticles();
+
+				if (count($articles) == 1) {
+					return $articles[0]['title'];
+				}
+
+				foreach ($articles as $article) {
+					$json = \Heimat\Sources\Wikidata\Article::getJSON($article['title']);
+					if ($json->getArray()['claims']['P17'] ?? null) {
+						return $article['title'];
+					}
+				}
+
+				return null;
+			}, $this->getWikidataReference());
 		} catch (\Throwable $e) {
 			return null;
 		}
 	}
 
-	public function getWikidataArticleContents() : TJSON
+	public function getWikidataArticleJSON() : ?TJSON
 	{
 		try {
-			return \Katu\Cache\General::get([__CLASS__, __FUNCTION__], '1 week', function ($reference) {
-				$curl = new \Curl\Curl;
-				$res = $curl->get('https://www.wikidata.org/w/api.php', [
-					'action' => 'query',
-					'format' => 'json',
-					'prop' => 'revisions',
-					'rvprop' => 'content',
-					'rvslots' => '*',
-					'titles' => $this->getWikidataArticleTitle(),
-				]);
-				$res = \Katu\Files\Formats\JSON::decodeAsArray(\Katu\Files\Formats\JSON::encode($res));
-
-				return new TJSON(array_values($res['query']['pages'])[0]['revisions'][0]['slots']['main']['*']);
-			}, $this->getReference());
+			return \Katu\Cache\General::get([__CLASS__, __FUNCTION__], '1 week', function ($title) {
+				return \Heimat\Sources\Wikidata\Article::getJSON($title);
+			}, $this->getWikidataArticleTitle());
 		} catch (\Throwable $e) {
 			return null;
 		}
 	}
+
+	// public function getNUTS3()
+	// {
+	// 	return $this->getWikidataArticleJSON()->getArray()['claims']['P605'][0]['mainsnak']['datavalue']['value'] ?? null;
+	// 	var_dump($this->getWikidataArticleJSON()->getArray()['claims']['P782'] ?? null);
+	// 	var_dump($this->getWikidataArticleJSON()->getArray()['claims']['P281'] ?? null);
+	// }
 }
