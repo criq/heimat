@@ -1,12 +1,12 @@
 <?php
 
-namespace Heimat\Sources\CZSO;
+namespace Heimat\Schema;
 
-class LAU1Population
+class NUTS3 extends \Heimat\SchemaObject
 {
-	public static function getData(?int $year = null) : array
+	public static function getList(?int $year = null) : array
 	{
-		$url = Population::getTableUrlByTitle("Počet obyvatel v regionech soudržnosti, krajích a okresech České republiky", $year);
+		$url = \Heimat\Sources\CZSO\Population::getTableUrlByTitle("Počet obyvatel v regionech soudržnosti, krajích a okresech České republiky", $year);
 		if (!$url) {
 			return null;
 		}
@@ -18,16 +18,14 @@ class LAU1Population
 
 		$array = $worksheet->toArray();
 		$array = array_values(array_filter($array, function ($i) {
-			return preg_match('/^CZ[0-9A-Z]{4}$/', $i[0]);
+			return preg_match('/^CZ[0-9]{3}$/', $i[0]);
 		}));
 		$array = array_map(function ($i) {
-			return [
-				'lau1' => $i[0],
-				'name' => $i[1],
+			return new static($i[0], $i[1], [
 				'population' => $i[2],
 				'populationMale' => $i[3],
 				'populationFemale' => $i[4],
-			];
+			]);
 		}, $array);
 
 		$file->delete();

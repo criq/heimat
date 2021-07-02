@@ -1,5 +1,7 @@
 <?php
 
+// https://www.risy.cz/cs/vyhledavace/obce/532606-choratice
+
 namespace Heimat\Sources\CZSO;
 
 use Katu\Types\TURL;
