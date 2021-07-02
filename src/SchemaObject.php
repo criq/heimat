@@ -81,4 +81,9 @@ abstract class SchemaObject
 			return null;
 		}
 	}
+
+	public function getWikidataTitle(?string $languageCode = 'cs') : ?string
+	{
+		return $this->getWikidataArticleJSON()->getArray()['labels'][$languageCode]['value'] ?? null;
+	}
 }
