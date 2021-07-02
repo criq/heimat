@@ -81,11 +81,4 @@ abstract class SchemaObject
 			return null;
 		}
 	}
-
-	// public function getNUTS3()
-	// {
-	// 	return $this->getWikidataArticleJSON()->getArray()['claims']['P605'][0]['mainsnak']['datavalue']['value'] ?? null;
-	// 	var_dump($this->getWikidataArticleJSON()->getArray()['claims']['P782'] ?? null);
-	// 	var_dump($this->getWikidataArticleJSON()->getArray()['claims']['P281'] ?? null);
-	// }
 }
