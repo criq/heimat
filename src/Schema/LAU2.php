@@ -34,11 +34,6 @@ class LAU2 extends \Heimat\SchemaObject
 		return $array;
 	}
 
-	public function getWikidataReference() : string
-	{
-		return 'CZ' . $this->getReference();
-	}
-
 	public function getLAU1() : LAU1
 	{
 		try {
@@ -65,5 +60,15 @@ class LAU2 extends \Heimat\SchemaObject
 				}
 			}
 		}
+	}
+
+	public function getWikidataClass() : string
+	{
+		return 'Q5153359';
+	}
+
+	public function getWikidataReference() : string
+	{
+		return 'CZ' . $this->getReference();
 	}
 }

@@ -4,8 +4,10 @@ namespace Heimat;
 
 use Katu\Types\TJSON;
 
-class SchemaObject
+abstract class SchemaObject
 {
+	abstract public function getWikidataClass() : string;
+
 	public function __construct(string $reference, ?string $name = null, ?array $data = null)
 	{
 		$this->reference = $reference;
@@ -55,8 +57,10 @@ class SchemaObject
 
 				foreach ($articles as $article) {
 					$json = \Heimat\Sources\Wikidata\Article::getJSON($article['title']);
-					if ($json->getArray()['claims']['P17'] ?? null) {
-						return $article['title'];
+					foreach ($json->getArray()['claims']['P31'] as $claim) {
+						if ($this->getWikidataClass() == $claim['mainsnak']['datavalue']['value']['id']) {
+							return $article['title'];
+						}
 					}
 				}
 

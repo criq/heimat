@@ -32,4 +32,9 @@ class NUTS3 extends \Heimat\SchemaObject
 
 		return $array;
 	}
+
+	public function getWikidataClass() : string
+	{
+		return 'Q38911';
+	}
 }

@@ -33,7 +33,7 @@ class LAU1 extends \Heimat\SchemaObject
 		return $array;
 	}
 
-	public function getNUTS3() : NUTS3
+	public function getNUTS3() : ?NUTS3
 	{
 		try {
 			$array = $this->getWikidataArticleJSON()->getArray()['claims']['P131'];
@@ -54,9 +54,18 @@ class LAU1 extends \Heimat\SchemaObject
 
 			throw new \Exception;
 		} catch (\Throwable $e) {
-			$nuts3 = $this->getWikidataArticleJSON()->getArray()['claims']['P605'][0]['mainsnak']['datavalue']['value'];
+			try {
+				$nuts3 = $this->getWikidataArticleJSON()->getArray()['claims']['P605'][0]['mainsnak']['datavalue']['value'];
 
-			return new NUTS3($nuts3);
+				return new NUTS3($nuts3);
+			} catch (\Throwable $e) {
+				return null;
+			}
 		}
+	}
+
+	public function getWikidataClass() : string
+	{
+		return 'Q548611';
 	}
 }
