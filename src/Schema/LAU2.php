@@ -120,7 +120,7 @@ class LAU2 extends \Heimat\SchemaObject
 		foreach ($items as $item) {
 			if (preg_match("/^$postalCodeRegexp$/", $item)) {
 				$postalCodes->append($item);
-			} elseif (preg_match("/^(?<start>$postalCodeRegexp)" . "(–|\s*až\s*)" . "(?<end>$postalCodeRegexp)$/", $item, $match)) {
+			} elseif (preg_match("/^(?<start>$postalCodeRegexp)\s*(–|-|až)\s*(?<end>$postalCodeRegexp)$/", $item, $match)) {
 				$postalCodes->append(range(static::getStandardPostalCode($match['start']), static::getStandardPostalCode($match['end'])));
 			} else {
 				var_dump('------------------------------------------------------------------------------------------------------------------');
@@ -152,7 +152,7 @@ class LAU2 extends \Heimat\SchemaObject
 		return static::getUniqueFormattedPostalCodes($postalCodes->getArray());
 	}
 
-	public function getCombinedPostalCodes() : array
+	public function getPostalCodes() : array
 	{
 		return static::getUniqueFormattedPostalCodes([
 			$this->getWikidataPostalCodes(),
