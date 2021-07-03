@@ -46,10 +46,8 @@ abstract class SchemaObject
 	public function getWikidataArticleTitle() : ?string
 	{
 		try {
-			$object = $this;
-
-			return \Katu\Cache\General::get([__CLASS__, __FUNCTION__], '1 week', function ($reference) use ($object) {
-				$articles = $object->getWikidataArticles();
+			return \Katu\Cache\General::get([__CLASS__, __FUNCTION__, $this->getWikidataReference()], '1 week', function () {
+				$articles = $this->getWikidataArticles();
 
 				if (count($articles) == 1) {
 					return $articles[0]['title'];
@@ -65,7 +63,7 @@ abstract class SchemaObject
 				}
 
 				return null;
-			}, $this->getWikidataReference());
+			});
 		} catch (\Throwable $e) {
 			return null;
 		}

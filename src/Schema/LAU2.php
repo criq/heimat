@@ -9,7 +9,7 @@ class LAU2 extends \Heimat\SchemaObject
 {
 	public static function getList(?int $year = null) : array
 	{
-		return \Katu\Cache\General::get([__CLASS__, __FUNCTION__], '1 week', function ($year) {
+		return \Katu\Cache\General::get([__CLASS__, __FUNCTION__, $year], '1 week', function ($year) {
 			$url = \Heimat\Sources\CZSO\Population::getTableUrlByTitle("Počet obyvatel v obcích České republiky", $year);
 			if (!$url) {
 				return null;
@@ -85,14 +85,14 @@ class LAU2 extends \Heimat\SchemaObject
 		return 'CZ' . $this->getReference();
 	}
 
-	public static function postalCodeToInt(string $value) : int
+	public static function getStandardPostalCode(string $value) : int
 	{
 		return (int)preg_replace('/\s/', '', $value);
 	}
 
-	public static function intToPostalCode(string $value) : string
+	public static function getFormattedPostalCode(string $value) : string
 	{
-		$value = static::postalCodeToInt($value);
+		$value = static::getStandardPostalCode($value);
 
 		return implode(' ', [
 			substr($value, 0, 3),
@@ -102,25 +102,30 @@ class LAU2 extends \Heimat\SchemaObject
 
 	public function getWikidataPostalCodes() : array
 	{
-		$array = [];
-		foreach ($this->getWikidataArticleJSON()->getArray()['claims']['P281'] as $claim) {
-			$array[] = (string)(new TString($claim['mainsnak']['datavalue']['value']))->normalizeSpaces();
-		}
-
-		$postalCodeRegexp = '[0-9]\s*[0-9]\s*[0-9]\s*[0-9]\s*[0-9]';
-		$postalCodes = new TArray;
-		foreach ($array as $item) {
-			if (preg_match("/^$postalCodeRegexp$/", $item)) {
-				$postalCodes->append($item);
-			} elseif (preg_match("/^($postalCodeRegexp)" . "–" . "($postalCodeRegexp)$/", $item, $match)) {
-				$postalCodes->append(range(static::postalCodeToInt($match[1]), static::postalCodeToInt($match[2])));
-			} else {
-				var_dump($item);die;
+		return \Katu\Cache\General::get([__CLASS__, __FUNCTION__, $this->getReference()], '1 week', function () {
+			$array = [];
+			foreach (($this->getWikidataArticleJSON()->getArray()['claims']['P281'] ?? []) as $claim) {
+				$string = (string)(new TString($claim['mainsnak']['datavalue']['value']))->normalizeSpaces();
+				$string = preg_replace('/&nbsp;/', '', $string);
+				$array[] = $string;
 			}
-		}
 
-		return $postalCodes->flatten()->map(function ($i) {
-			return static::intToPostalCode($i);
-		})->getArray();
+			$postalCodeRegexp = '[0-9]\s*[0-9]\s*[0-9]\s*[0-9]\s*[0-9]';
+			$postalCodes = new TArray;
+			foreach ($array as $item) {
+				if (preg_match("/^$postalCodeRegexp$/", $item)) {
+					$postalCodes->append($item);
+				} elseif (preg_match("/^(?<start>$postalCodeRegexp)" . "(–|\s*až\s*)" . "(?<end>$postalCodeRegexp)$/", $item, $match)) {
+					$postalCodes->append(range(static::getStandardPostalCode($match['start']), static::getStandardPostalCode($match['end'])));
+				} else {
+					var_dump('---------------------------------------------------------');die;
+					var_dump($item);die;
+				}
+			}
+
+			return $postalCodes->flatten()->map(function ($i) {
+				return static::getFormattedPostalCode($i);
+			})->unique()->values()->getArray();
+		});
 	}
 }
