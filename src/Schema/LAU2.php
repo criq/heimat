@@ -100,32 +100,63 @@ class LAU2 extends \Heimat\SchemaObject
 		]);
 	}
 
+	public static function getUniqueFormattedPostalCodes(array $value) : array
+	{
+		return (new TArray($value))->flatten()->map(function ($i) {
+			return static::getFormattedPostalCode($i);
+		})->unique()->natsort()->values()->getArray();
+	}
+
+	public static function extractPostalCodes(string $value) : array
+	{
+		$string = (new TString($value))->normalizeSpaces();
+		$string = preg_replace('/&nbsp;/', '', $string);
+
+		$items = explode(',', $string);
+		$items = array_map('trim', $items);
+
+		$postalCodeRegexp = '[0-9]\s*[0-9]\s*[0-9]\s*[0-9]\s*[0-9]';
+		$postalCodes = new TArray;
+		foreach ($items as $item) {
+			if (preg_match("/^$postalCodeRegexp$/", $item)) {
+				$postalCodes->append($item);
+			} elseif (preg_match("/^(?<start>$postalCodeRegexp)" . "(–|\s*až\s*)" . "(?<end>$postalCodeRegexp)$/", $item, $match)) {
+				$postalCodes->append(range(static::getStandardPostalCode($match['start']), static::getStandardPostalCode($match['end'])));
+			} else {
+				var_dump('------------------------------------------------------------------------------------------------------------------');
+				var_dump($item);
+				var_dump('------------------------------------------------------------------------------------------------------------------');
+			}
+		}
+
+		return static::getUniqueFormattedPostalCodes($postalCodes->getArray());
+	}
+
 	public function getWikidataPostalCodes() : array
 	{
-		return \Katu\Cache\General::get([__CLASS__, __FUNCTION__, $this->getReference()], '1 week', function () {
-			$array = [];
-			foreach (($this->getWikidataArticleJSON()->getArray()['claims']['P281'] ?? []) as $claim) {
-				$string = (string)(new TString($claim['mainsnak']['datavalue']['value']))->normalizeSpaces();
-				$string = preg_replace('/&nbsp;/', '', $string);
-				$array[] = $string;
-			}
+		$postalCodes = new TArray;
+		foreach (($this->getWikidataArticleJSON()->getArray()['claims']['P281'] ?? []) as $claim) {
+			$postalCodes->append(static::extractPostalCodes($claim['mainsnak']['datavalue']['value']));
+		}
 
-			$postalCodeRegexp = '[0-9]\s*[0-9]\s*[0-9]\s*[0-9]\s*[0-9]';
-			$postalCodes = new TArray;
-			foreach ($array as $item) {
-				if (preg_match("/^$postalCodeRegexp$/", $item)) {
-					$postalCodes->append($item);
-				} elseif (preg_match("/^(?<start>$postalCodeRegexp)" . "(–|\s*až\s*)" . "(?<end>$postalCodeRegexp)$/", $item, $match)) {
-					$postalCodes->append(range(static::getStandardPostalCode($match['start']), static::getStandardPostalCode($match['end'])));
-				} else {
-					var_dump('---------------------------------------------------------');die;
-					var_dump($item);die;
-				}
-			}
+		return static::getUniqueFormattedPostalCodes($postalCodes->getArray());
+	}
 
-			return $postalCodes->flatten()->map(function ($i) {
-				return static::getFormattedPostalCode($i);
-			})->unique()->values()->getArray();
-		});
+	public function getWikipediaPostalCodes() : array
+	{
+		$postalCodes = new TArray;
+		if (preg_match('/\|\s*PSČ\s*=\s*(?<postalCodes>.+)/', $this->getWikipediaArticleContents(), $match)) {
+			$postalCodes->append(static::extractPostalCodes($match['postalCodes']));
+		}
+
+		return static::getUniqueFormattedPostalCodes($postalCodes->getArray());
+	}
+
+	public function getCombinedPostalCodes() : array
+	{
+		return static::getUniqueFormattedPostalCodes([
+			$this->getWikidataPostalCodes(),
+			$this->getWikipediaPostalCodes(),
+		]);
 	}
 }

@@ -23,10 +23,10 @@ class Article
 		}, $query);
 	}
 
-	public static function getArticleContents(string $query) : ?string
+	public static function getContents(string $title) : ?string
 	{
 		try {
-			return array_values(static::getQuery($query)['query']['pages'])[0]['revisions'][0]['slots']['main']['*'];
+			return array_values(static::getQueryResult($title)['query']['pages'])[0]['revisions'][0]['slots']['main']['*'];
 		} catch (\Throwable $e) {
 			return null;
 		}

@@ -84,4 +84,14 @@ abstract class SchemaObject
 	{
 		return $this->getWikidataArticleJSON()->getArray()['labels'][$languageCode]['value'] ?? null;
 	}
+
+	public function getWikipediaArticleTitle(?string $languageCode = 'cs') : ?string
+	{
+		return $this->getWikidataArticleJSON()->getArray()['sitelinks'][mb_strtolower($languageCode) . 'wiki']['title'] ?? null;
+	}
+
+	public function getWikipediaArticleContents()
+	{
+		return \Heimat\Sources\Wikipedia\Article::getContents($this->getWikipediaArticleTitle());
+	}
 }
