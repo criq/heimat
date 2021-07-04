@@ -25,6 +25,11 @@ abstract class SchemaObject
 		return $this->name;
 	}
 
+	public function getData() : ?array
+	{
+		return $this->data;
+	}
+
 	public function getWikidataReference() : string
 	{
 		return $this->getReference();
