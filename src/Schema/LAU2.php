@@ -112,7 +112,7 @@ class LAU2 extends \Heimat\SchemaObject
 		$string = (new TString($value))->normalizeSpaces();
 		$string = preg_replace('/&nbsp;/', '', $string);
 
-		$items = explode(',', $string);
+		$items = preg_split('/[,\/]/', $string);
 		$items = array_map('trim', $items);
 
 		$postalCodeRegexp = '[0-9]\s*[0-9]\s*[0-9]\s*[0-9]\s*[0-9]';
