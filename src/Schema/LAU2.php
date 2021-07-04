@@ -41,6 +41,10 @@ class LAU2 extends \Heimat\SchemaObject
 
 	public function getLAU1() : LAU1
 	{
+		if ($this->getData()['lau1'] ?? null) {
+			return new LAU1($this->getData()['lau1']);
+		}
+
 		try {
 			$claims = $this->getWikidataArticleJSON()->getArray()['claims']['P131'];
 			usort($claims, function ($a, $b) {

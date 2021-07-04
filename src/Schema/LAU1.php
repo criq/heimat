@@ -35,6 +35,10 @@ class LAU1 extends \Heimat\SchemaObject
 
 	public function getNUTS3() : ?NUTS3
 	{
+		if ($this->getData()['nuts3'] ?? null) {
+			return new NUTS3($this->getData()['nuts3']);
+		}
+
 		try {
 			$claims = $this->getWikidataArticleJSON()->getArray()['claims']['P131'];
 			usort($claims, function ($a, $b) {
