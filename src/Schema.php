@@ -6,7 +6,7 @@ use Katu\Types\TJSON;
 
 abstract class Schema
 {
-	const CACHE_TIMEOUT = '1 week';
+	const CACHE_TIMEOUT = '2 weeks';
 
 	abstract public static function getWikidataClass() : string;
 

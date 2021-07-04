@@ -4,5 +4,5 @@ namespace Heimat;
 
 class Source
 {
-	const CACHE_TIMEOUT = '1 week';
+	const CACHE_TIMEOUT = '2 weeks';
 }
