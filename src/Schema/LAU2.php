@@ -89,14 +89,14 @@ class LAU2 extends \Heimat\Schema
 		return 'CZ' . $this->getReference();
 	}
 
-	public static function getStandardPostalCode(string $value) : int
+	public static function getPlainPostalCode(string $value) : int
 	{
 		return (int)preg_replace('/\s/', '', $value);
 	}
 
 	public static function getFormattedPostalCode(string $value) : string
 	{
-		$value = static::getStandardPostalCode($value);
+		$value = static::getPlainPostalCode($value);
 
 		return implode(' ', [
 			substr($value, 0, 3),
@@ -126,7 +126,7 @@ class LAU2 extends \Heimat\Schema
 			if (preg_match("/^$postalCodeRegexp$/", $item)) {
 				$postalCodes->append($item);
 			} elseif (preg_match("/^(?<start>$postalCodeRegexp)\s*(–|-|až)\s*(?<end>$postalCodeRegexp)$/", $item, $match)) {
-				$postalCodes->append(range(static::getStandardPostalCode($match['start']), static::getStandardPostalCode($match['end'])));
+				$postalCodes->append(range(static::getPlainPostalCode($match['start']), static::getPlainPostalCode($match['end'])));
 			} else {
 				var_dump('------------------------------------------------------------------------------------------------------------------');
 				var_dump($item);
