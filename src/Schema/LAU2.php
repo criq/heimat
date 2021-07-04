@@ -5,11 +5,11 @@ namespace Heimat\Schema;
 use Katu\Types\TArray;
 use Katu\Types\TString;
 
-class LAU2 extends \Heimat\SchemaObject
+class LAU2 extends \Heimat\Schema
 {
 	public static function getList(?int $year = null) : array
 	{
-		return \Katu\Cache\General::get([__CLASS__, __FUNCTION__, $year], '1 week', function ($year) {
+		return \Katu\Cache\General::get([__CLASS__, __FUNCTION__, $year], static::CACHE_TIMEOUT, function ($year) {
 			$url = \Heimat\Sources\CZSO\Population::getTableUrlByTitle("Počet obyvatel v obcích České republiky", $year);
 			if (!$url) {
 				return null;

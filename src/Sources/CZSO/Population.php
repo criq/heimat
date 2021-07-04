@@ -6,7 +6,7 @@ namespace Heimat\Sources\CZSO;
 
 use Katu\Types\TURL;
 
-class Population
+class Population extends \Heimat\Source
 {
 	public static function getTableUrls(?int $year = null) : array
 	{
@@ -15,7 +15,7 @@ class Population
 		}
 
 		$url = "https://www.czso.cz/csu/czso/pocet-obyvatel-v-obcich-k-11" . $year;
-		$src = \Katu\Cache\URL::get($url, '1 day');
+		$src = \Katu\Cache\URL::get($url, static::CACHE_TIMEOUT);
 		$dom = \Katu\Tools\DOM\DOM::crawlHtml($src);
 
 		$array = $dom->filter('.prilohy-publikace tr')->each(function ($e) {

@@ -4,8 +4,10 @@ namespace Heimat;
 
 use Katu\Types\TJSON;
 
-abstract class SchemaObject
+abstract class Schema
 {
+	const CACHE_TIMEOUT = '1 week';
+
 	abstract public static function getWikidataClass() : string;
 
 	public function __construct(string $reference, ?string $name = null, ?array $data = null)
@@ -20,9 +22,9 @@ abstract class SchemaObject
 		return $this->reference;
 	}
 
-	public function getName() : ?string
+	public function getName($lookup = false) : ?string
 	{
-		return $this->name;
+		return $this->name ?: ($lookup ? $this->getWikidataTitle() : null);
 	}
 
 	public function getData() : ?array

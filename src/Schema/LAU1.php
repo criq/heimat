@@ -2,7 +2,7 @@
 
 namespace Heimat\Schema;
 
-class LAU1 extends \Heimat\SchemaObject
+class LAU1 extends \Heimat\Schema
 {
 	public static function getList(?int $year = null) : array
 	{

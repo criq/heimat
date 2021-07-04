@@ -2,7 +2,7 @@
 
 namespace Heimat\Schema;
 
-class NUTS3 extends \Heimat\SchemaObject
+class NUTS3 extends \Heimat\Schema
 {
 	public static function getList(?int $year = null) : array
 	{

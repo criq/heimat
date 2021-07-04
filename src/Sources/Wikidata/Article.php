@@ -4,11 +4,11 @@ namespace Heimat\Sources\Wikidata;
 
 use Katu\Types\TJSON;
 
-class Article
+class Article extends \Heimat\Source
 {
 	public static function getSearchResult(string $query) : array
 	{
-		return \Katu\Cache\General::get([__CLASS__, __FUNCTION__], '1 week', function ($query) {
+		return \Katu\Cache\General::get([__CLASS__, __FUNCTION__], static::CACHE_TIMEOUT, function ($query) {
 			$curl = new \Curl\Curl;
 			$res = $curl->get('https://www.wikidata.org/w/api.php', [
 				'action' => 'query',
@@ -23,7 +23,7 @@ class Article
 
 	public static function getJSON(string $title) : TJSON
 	{
-		return \Katu\Cache\General::get([__CLASS__, __FUNCTION__], '1 week', function ($title) {
+		return \Katu\Cache\General::get([__CLASS__, __FUNCTION__], static::CACHE_TIMEOUT, function ($title) {
 			$curl = new \Curl\Curl;
 			$res = $curl->get('https://www.wikidata.org/w/api.php', [
 				'action' => 'query',

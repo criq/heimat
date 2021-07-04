@@ -2,11 +2,11 @@
 
 namespace Heimat\Sources\Google;
 
-class Search
+class Search extends \Heimat\Source
 {
 	public static function getQueryResult(string $query) : array
 	{
-		return \Katu\Cache\General::get([__CLASS__, __FUNCTION__], '1 week', function ($query) {
+		return \Katu\Cache\General::get([__CLASS__, __FUNCTION__], static::CACHE_TIMEOUT, function ($query) {
 			$curl = new \Curl\Curl;
 			$res = $curl->get('https://www.googleapis.com/customsearch/v1', [
 				'key' => \Katu\Config\Config::get('google', 'api', 'key'),
