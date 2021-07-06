@@ -41,6 +41,13 @@ class LAU2 extends \Heimat\Schema
 
 	public function getLAU1() : LAU1
 	{
+		$fixes = [
+			'562688' => 'CZ0313', // Klec, Jihočeský
+			'581976' => 'CZ0643', // Lomnice, Jihomoravský
+			'584002' => 'CZ0643', // Tišnov, Jihomoravský
+			'593656' => 'CZ0646', // Vážany, Jihomoravský
+		];
+
 		if ($this->getData()['lau1'] ?? null) {
 			return new LAU1($this->getData()['lau1']);
 		}
@@ -65,6 +72,10 @@ class LAU2 extends \Heimat\Schema
 						return new LAU1($lau1);
 					}
 				}
+			}
+
+			if ($fixes[$this->getReference()] ?? null) {
+				return new LAU1($fixes[$this->getReference()]);
 			}
 
 			throw new \Exception;
