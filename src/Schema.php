@@ -40,12 +40,13 @@ abstract class Schema
 	public function getWikidataArticles() : ?array
 	{
 		try {
-			$cache = new \Katu\Cache\General([__CLASS__, __FUNCTION__, $this->getWikidataReference()], '1 week', function () {
-				$res = \Heimat\Sources\Wikidata\Article::getSearchResult('"' . $this->getWikidataReference() . '"');
+			$cache = new \Katu\Cache\General([__CLASS__, __FUNCTION__], '1 week', function ($reference) {
+				$res = \Heimat\Sources\Wikidata\Article::getSearchResult('"' . $reference . '"');
 
 				return $res['query']['search'];
 			});
 			$cache->disableMemory();
+			$cache->setArgs($this->getWikidataReference());
 
 			return $cache->getResult();
 		} catch (\Throwable $e) {
@@ -85,9 +86,10 @@ abstract class Schema
 	public function getWikidataArticleJSON() : ?TJSON
 	{
 		try {
-			$cache = new \Katu\Cache\General([__CLASS__, __FUNCTION__, $this->getWikidataArticleTitle()], '1 week', function () {
-				return \Heimat\Sources\Wikidata\Article::getJSON($this->getWikidataArticleTitle());
+			$cache = new \Katu\Cache\General([__CLASS__, __FUNCTION__], '1 week', function ($title) {
+				return \Heimat\Sources\Wikidata\Article::getJSON($title);
 			});
+			$cache->setArgs($this->getWikidataArticleTitle());
 			$cache->disableMemory();
 
 			return $cache->getResult();
