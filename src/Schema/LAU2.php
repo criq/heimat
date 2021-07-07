@@ -74,12 +74,12 @@ class LAU2 extends \Heimat\Schema
 				}
 			}
 
+			throw new \Exception;
+		} catch (\Throwable $e) {
 			if ($fixes[$this->getReference()] ?? null) {
 				return new LAU1($fixes[$this->getReference()]);
 			}
 
-			throw new \Exception;
-		} catch (\Throwable $e) {
 			foreach ($this->getWikidataArticleJSON()->getArray()['claims']['P782'] as $claim) {
 				if (($claim['qualifiers']['P3831'][0]['datavalue']['value']['id'] ?? null) == 'Q11618279') {
 					$lau1 = $claim['mainsnak']['datavalue']['value'];
