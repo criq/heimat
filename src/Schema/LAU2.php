@@ -9,7 +9,7 @@ class LAU2 extends \Heimat\Schema
 {
 	public static function getList(?int $year = null) : array
 	{
-		return \Katu\Cache\General::get([__CLASS__, __FUNCTION__, $year], static::CACHE_TIMEOUT, function ($year) {
+		$cache = new \Katu\Cache\General([__CLASS__, __FUNCTION__, $year], static::CACHE_TIMEOUT, function ($year) {
 			$url = \Heimat\Sources\CZSO\Population::getTableUrlByTitle("Počet obyvatel v obcích České republiky", $year);
 			if (!$url) {
 				return null;
@@ -36,7 +36,11 @@ class LAU2 extends \Heimat\Schema
 			$file->delete();
 
 			return $array;
-		}, $year);
+		});
+		$cache->setArgs($year);
+		$cache->disableMemory();
+
+		return $cache->getResult();
 	}
 
 	public function getLAU1() : LAU1
