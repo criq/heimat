@@ -179,4 +179,18 @@ class LAU2 extends \Heimat\Schema
 			$this->getWikipediaPostalCodes(),
 		]);
 	}
+
+	public function getEmailAddresses() : array
+	{
+		return array_map(function ($i) {
+			return ltrim($i['mainsnak']['datavalue']['value'], 'mailto:');
+		}, $this->getWikidataArticleJSON()->getArray()['claims']['P968'] ?? []);
+	}
+
+	public function getUrls() : array
+	{
+		return array_map(function ($i) {
+			return $i['mainsnak']['datavalue']['value'];
+		}, $this->getWikidataArticleJSON()->getArray()['claims']['P856'] ?? []);
+	}
 }
