@@ -183,7 +183,7 @@ class LAU2 extends \Heimat\Schema
 	public function getEmailAddresses() : array
 	{
 		return array_map(function ($i) {
-			return ltrim($i['mainsnak']['datavalue']['value'], 'mailto:');
+			return str_replace('mailto:', '', $i['mainsnak']['datavalue']['value'], 'mailto:');
 		}, $this->getWikidataArticleJSON()->getArray()['claims']['P968'] ?? []);
 	}
 
