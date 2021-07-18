@@ -106,7 +106,7 @@ class LAU2 extends \Heimat\Schema
 
 	public static function getPlainPostalCode(string $value) : int
 	{
-		return (int)preg_replace('/\s/', '', $value);
+		return (new \Fono\Countries\CZ\PostalCode($value))->getPlain();
 	}
 
 	public static function getFormattedPostalCode(string $value) : string
