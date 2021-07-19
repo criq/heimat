@@ -111,7 +111,7 @@ class LAU2 extends \Heimat\Schema
 
 	public static function getFormattedPostalCode(string $value) : string
 	{
-		return (new \Fono\Countries\CZ\PostalCode((new \Fono\Countries\CZ\PostalCode($value))->getPlain()))->getFormatted();
+		return (new \Fono\Countries\CZ\PostalCode($value))->getFormatted();
 	}
 
 	public static function getUniqueFormattedPostalCodes(array $value) : array
