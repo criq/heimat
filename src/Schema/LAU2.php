@@ -111,7 +111,7 @@ class LAU2 extends \Heimat\Schema
 
 	public static function getFormattedPostalCode(string $value) : string
 	{
-		return (new \Fono\Countries\CZ\PostalCode($value))->getFormatted();
+		return (new \Fono\Countries\CZ\PostalCode((new \Fono\Countries\CZ\PostalCode($value))->getPlain()))->getFormatted();
 	}
 
 	public static function getUniqueFormattedPostalCodes(array $value) : array
@@ -137,10 +137,6 @@ class LAU2 extends \Heimat\Schema
 				$postalCodes->append($item);
 			} elseif (preg_match("/^(?<start>$postalCodeRegexp)\s*(–|-|až)\s*(?<end>$postalCodeRegexp)$/", $item, $match)) {
 				$postalCodes->append(range(static::getPlainPostalCode($match['start']), static::getPlainPostalCode($match['end'])));
-			} else {
-				var_dump('------------------------------------------------------------------------------------------------------------------');
-				var_dump($item);
-				var_dump('------------------------------------------------------------------------------------------------------------------');
 			}
 		}
 
