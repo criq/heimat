@@ -184,4 +184,13 @@ class LAU2 extends \Heimat\Schema
 			return $i['mainsnak']['datavalue']['value'];
 		}, $this->getWikidataArticleJSON()->getArray()['claims']['P856'] ?? []);
 	}
+
+	public function getWikipediaMayor() : ?\Heimat\Sources\Wikipedia\Mayor
+	{
+		if (preg_match('/\|\s*(?<role>starosta|starostka|primátor|primátorka)\s*=\s*(?<name>.+)/u', $this->getWikipediaArticleContents(), $match)) {
+			return new \Heimat\Sources\Wikipedia\Mayor($match['role'], $match['name']);
+		}
+
+		return null;
+	}
 }
