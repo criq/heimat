@@ -34,4 +34,19 @@ class Mayor
 
 		return $map[$this->getRole()] ?? null;
 	}
+
+	public static function getNameFromSource($value)
+	{
+		$res = $value;
+		$res = preg_replace('/<ref>.+/', '', $res);
+		$res = preg_replace('/&nbsp;/', ' ', $res);
+		$res = preg_replace('/\{\{nowrap\|(.+)\}\}/U', '\\1', $res);
+		$res = preg_replace('/<!--.*-->/U', '', $res);
+		$res = preg_replace('/\s*\(.+\)\s*/U', '', $res);
+		$res = preg_replace('/\[\[(.+)\|(.+)\]\]/U', '\\2', $res);
+		$res = preg_replace('/\[\[(.+)\]\]/U', '\\1', $res);
+		$res = trim($res);
+
+		return $res;
+	}
 }

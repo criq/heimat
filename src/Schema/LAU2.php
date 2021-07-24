@@ -188,7 +188,7 @@ class LAU2 extends \Heimat\Schema
 	public function getWikipediaMayor() : ?\Heimat\Sources\Wikipedia\Mayor
 	{
 		if (preg_match('/\|\s*(?<role>starosta|starostka|primátor|primátorka)\s*=\s*(?<name>.+)/u', $this->getWikipediaArticleContents(), $match)) {
-			return new \Heimat\Sources\Wikipedia\Mayor($match['role'], $match['name']);
+			return new \Heimat\Sources\Wikipedia\Mayor($match['role'], \Heimat\Sources\Wikipedia\Mayor::getNameFromSource($match['name']));
 		}
 
 		return null;
