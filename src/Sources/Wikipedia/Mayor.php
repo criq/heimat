@@ -38,6 +38,7 @@ class Mayor
 	public static function getNameFromSource($value)
 	{
 		$res = $value;
+		$res = preg_replace('/\(\[\[.+\]\]\)/', '', $res);
 		$res = preg_replace('/<ref.+/', '', $res);
 		$res = preg_replace('/&nbsp;/', ' ', $res);
 		$res = preg_replace('/\{\{nowrap\|(.+)\}\}/U', '\\1', $res);
