@@ -45,6 +45,7 @@ class Mayor
 		$res = preg_replace('/\s*\(.+\)\s*/U', '', $res);
 		$res = preg_replace('/\[\[(.+)\|(.+)\]\]/U', '\\2', $res);
 		$res = preg_replace('/\[\[(.+)\]\]/U', '\\1', $res);
+		$res = preg_replace('/BEZPP/', '', $res);
 		$res = trim($res);
 
 		return $res;
