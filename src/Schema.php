@@ -2,6 +2,8 @@
 
 namespace Heimat;
 
+use Katu\Tools\DateTime\Timeout;
+use Katu\Types\TIdentifier;
 use Katu\Types\TJSON;
 
 abstract class Schema
@@ -40,7 +42,7 @@ abstract class Schema
 	public function getWikidataArticles() : ?array
 	{
 		try {
-			$cache = new \Katu\Cache\General([__CLASS__, __FUNCTION__], '1 week', function ($reference) {
+			$cache = new \Katu\Cache\General(new TIdentifier(__CLASS__, __FUNCTION__), new Timeout('1 week'), function ($reference) {
 				$res = \Heimat\Sources\Wikidata\Article::getSearchResult('"' . $reference . '"');
 
 				return $res['query']['search'];
@@ -57,7 +59,7 @@ abstract class Schema
 	public function getWikidataArticleTitle() : ?string
 	{
 		try {
-			$cache = new \Katu\Cache\General([__CLASS__, __FUNCTION__, $this->getWikidataReference()], '1 week', function () {
+			$cache = new \Katu\Cache\General(new TIdentifier(__CLASS__, __FUNCTION__, $this->getWikidataReference()), new Timeout('1 week'), function () {
 				$articles = $this->getWikidataArticles();
 
 				if (count($articles) == 1) {
@@ -86,7 +88,7 @@ abstract class Schema
 	public function getWikidataArticleJSON() : ?TJSON
 	{
 		try {
-			$cache = new \Katu\Cache\General([__CLASS__, __FUNCTION__], '1 week', function ($title) {
+			$cache = new \Katu\Cache\General(new TIdentifier(__CLASS__, __FUNCTION__), new Timeout('1 week'), function ($title) {
 				return \Heimat\Sources\Wikidata\Article::getJSON($title);
 			});
 			$cache->setArgs($this->getWikidataArticleTitle());

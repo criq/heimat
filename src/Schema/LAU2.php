@@ -2,14 +2,16 @@
 
 namespace Heimat\Schema;
 
+use Katu\Tools\DateTime\Timeout;
 use Katu\Types\TArray;
+use Katu\Types\TIdentifier;
 use Katu\Types\TString;
 
 class LAU2 extends \Heimat\Schema
 {
 	public static function getList(?int $year = null) : array
 	{
-		$cache = new \Katu\Cache\General([__CLASS__, __FUNCTION__], static::CACHE_TIMEOUT, function ($year) {
+		$cache = new \Katu\Cache\General(new TIdentifier(__CLASS__, __FUNCTION__), new Timeout(static::CACHE_TIMEOUT), function ($year) {
 			$url = \Heimat\Sources\CZSO\Population::getTableUrlByTitle("Počet obyvatel v obcích České republiky", $year);
 			if (!$url) {
 				return null;

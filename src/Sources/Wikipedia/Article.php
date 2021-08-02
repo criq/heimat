@@ -2,11 +2,14 @@
 
 namespace Heimat\Sources\Wikipedia;
 
+use Katu\Tools\DateTime\Timeout;
+use Katu\Types\TIdentifier;
+
 class Article extends \Heimat\Source
 {
 	public static function getQueryResult(string $query) : array
 	{
-		$cache = new \Katu\Cache\General([__CLASS__, __FUNCTION__], static::CACHE_TIMEOUT, function ($query) {
+		$cache = new \Katu\Cache\General(new TIdentifier(__CLASS__, __FUNCTION__), new Timeout(static::CACHE_TIMEOUT), function ($query) {
 			$curl = new \Curl\Curl;
 			$res = $curl->get('https://cs.wikipedia.org/w/api.php', [
 				'action' => 'query',

@@ -2,13 +2,15 @@
 
 namespace Heimat\Sources\Wikidata;
 
+use Katu\Tools\DateTime\Timeout;
+use Katu\Types\TIdentifier;
 use Katu\Types\TJSON;
 
 class Article extends \Heimat\Source
 {
 	public static function getSearchResult(string $query) : array
 	{
-		$cache = new \Katu\Cache\General([__CLASS__, __FUNCTION__], static::CACHE_TIMEOUT, function ($query) {
+		$cache = new \Katu\Cache\General(new TIdentifier(__CLASS__, __FUNCTION__), new Timeout(static::CACHE_TIMEOUT), function ($query) {
 			$curl = new \Curl\Curl;
 			$res = $curl->get('https://www.wikidata.org/w/api.php', [
 				'action' => 'query',
@@ -27,7 +29,7 @@ class Article extends \Heimat\Source
 
 	public static function getJSON(string $title) : TJSON
 	{
-		$cache = new \Katu\Cache\General([__CLASS__, __FUNCTION__], static::CACHE_TIMEOUT, function ($title) {
+		$cache = new \Katu\Cache\General(new TIdentifier(__CLASS__, __FUNCTION__), new Timeout(static::CACHE_TIMEOUT), function ($title) {
 			$curl = new \Curl\Curl;
 			$res = $curl->get('https://www.wikidata.org/w/api.php', [
 				'action' => 'query',
