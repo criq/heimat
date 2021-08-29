@@ -8,7 +8,7 @@
 		}
 	},
 	"require": {
-		"jabli/fono": "dev-master",
-		"jabli/katu": "v2.x-dev"
+		"criq/fono": "dev-master",
+		"criq/katu": "v2.x-dev"
 	}
 }
