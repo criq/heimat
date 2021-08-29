@@ -1,5 +1,5 @@
 {
-	"name": "jabli/heimat",
+	"name": "criq/heimat",
 	"description": "geo stat utility",
 	"type": "library",
 	"autoload": {
