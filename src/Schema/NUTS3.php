@@ -11,20 +11,20 @@ class NUTS3 extends \Heimat\Schema
 			return null;
 		}
 
-		$file = \Katu\Files\File::createTemporaryFromURL($url, 'xlsx');
+		$file = \Katu\Files\File::createTemporaryFromURL($url, "xlsx");
 
 		$xls = \PhpOffice\PhpSpreadsheet\IOFactory::load($file);
 		$worksheet = $xls->getSheet(0);
 
 		$array = $worksheet->toArray();
 		$array = array_values(array_filter($array, function ($i) {
-			return preg_match('/^CZ[0-9]{3}$/', $i[0]);
+			return preg_match("/^CZ[0-9]{3}$/", $i[0]);
 		}));
 		$array = array_map(function ($i) {
 			return new static($i[0], $i[1], [
-				'population' => $i[2],
-				'populationMale' => $i[3],
-				'populationFemale' => $i[4],
+				"population" => $i[2],
+				"populationMale" => $i[3],
+				"populationFemale" => $i[4],
 			]);
 		}, $array);
 
@@ -35,6 +35,6 @@ class NUTS3 extends \Heimat\Schema
 
 	public static function getWikidataClass() : string
 	{
-		return 'Q38911';
+		return "Q38911";
 	}
 }

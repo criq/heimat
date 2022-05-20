@@ -12,11 +12,11 @@ class Article extends \Heimat\Source
 	{
 		$cache = new \Katu\Cache\General(new TIdentifier(__CLASS__, __FUNCTION__), new Timeout(static::CACHE_TIMEOUT), function ($query) {
 			$curl = new \Curl\Curl;
-			$res = $curl->get('https://www.wikidata.org/w/api.php', [
-				'action' => 'query',
-				'format' => 'json',
-				'list' => 'search',
-				'srsearch' => $query,
+			$res = $curl->get("https://www.wikidata.org/w/api.php", [
+				"action" => "query",
+				"format" => "json",
+				"list" => "search",
+				"srsearch" => $query,
 			]);
 
 			return \Katu\Files\Formats\JSON::decodeAsArray(\Katu\Files\Formats\JSON::encode($res));
@@ -31,18 +31,18 @@ class Article extends \Heimat\Source
 	{
 		$cache = new \Katu\Cache\General(new TIdentifier(__CLASS__, __FUNCTION__), new Timeout(static::CACHE_TIMEOUT), function ($title) {
 			$curl = new \Curl\Curl;
-			$res = $curl->get('https://www.wikidata.org/w/api.php', [
-				'action' => 'query',
-				'format' => 'json',
-				'prop' => 'revisions',
-				'rvprop' => 'content',
-				'rvslots' => '*',
-				'titles' => $title,
+			$res = $curl->get("https://www.wikidata.org/w/api.php", [
+				"action" => "query",
+				"format" => "json",
+				"prop" => "revisions",
+				"rvprop" => "content",
+				"rvslots" => "*",
+				"titles" => $title,
 			]);
 
 			$res = \Katu\Files\Formats\JSON::decodeAsArray(\Katu\Files\Formats\JSON::encode($res));
 
-			return new TJSON(array_values($res['query']['pages'])[0]['revisions'][0]['slots']['main']['*']);
+			return new TJSON(array_values($res["query"]["pages"])[0]["revisions"][0]["slots"]["main"]["*"]);
 		});
 		$cache->setArgs($title);
 		$cache->disableMemory();

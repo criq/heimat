@@ -43,7 +43,7 @@ abstract class Schema
 	{
 		try {
 			$cache = new \Katu\Cache\General(new TIdentifier(__CLASS__, __FUNCTION__), new Timeout("1 week"), function ($reference) {
-				$res = \Heimat\Sources\Wikidata\Article::getSearchResult(""" . $reference . """);
+				$res = \Heimat\Sources\Wikidata\Article::getSearchResult("\"{$reference}\"");
 
 				return $res["query"]["search"];
 			});

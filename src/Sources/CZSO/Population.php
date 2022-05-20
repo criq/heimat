@@ -12,19 +12,19 @@ class Population extends \Heimat\Source
 	public static function getTableUrls(?int $year = null) : array
 	{
 		if (!$year) {
-			$year = date('Y');
+			$year = date("Y");
 		}
 
 		$url = "https://www.czso.cz/csu/czso/pocet-obyvatel-v-obcich-k-11" . $year;
 		$src = \Katu\Cache\URL::get(new TURL($url), new Timeout(static::CACHE_TIMEOUT));
 		$dom = \Katu\Tools\DOM\DOM::crawlHtml($src);
 
-		$array = $dom->filter('.prilohy-publikace tr')->each(function ($e) {
+		$array = $dom->filter(".prilohy-publikace tr")->each(function ($e) {
 			return [
-				'title' => $e->filter('td')->eq(0)->text(),
-				'urls' => $e->filter('td')->eq(1)->filter('a')->each(function ($e) {
-					if (preg_match('/Excel/', $e->text())) {
-						return new TURL($e->attr('href'));
+				"title" => $e->filter("td")->eq(0)->text(),
+				"urls" => $e->filter("td")->eq(1)->filter("a")->each(function ($e) {
+					if (preg_match("/Excel/", $e->text())) {
+						return new TURL($e->attr("href"));
 					}
 				}),
 			];
@@ -32,7 +32,7 @@ class Population extends \Heimat\Source
 
 		$urls = [];
 		foreach ($array as $item) {
-			$urls[$item['title']] = array_filter($item['urls'])[0] ?? null;
+			$urls[$item["title"]] = array_filter($item["urls"])[0] ?? null;
 		}
 		$urls = array_filter($urls);
 
