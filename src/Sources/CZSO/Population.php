@@ -4,7 +4,7 @@
 
 namespace Heimat\Sources\CZSO;
 
-use Katu\Tools\DateTime\Timeout;
+use Katu\Tools\Calendar\Timeout;
 use Katu\Types\TURL;
 
 class Population extends \Heimat\Source

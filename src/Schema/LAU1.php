@@ -42,8 +42,8 @@ class LAU1 extends \Heimat\Schema
 		try {
 			$claims = $this->getWikidataArticleJSON()->getArray()['claims']['P131'];
 			usort($claims, function ($a, $b) {
-				$aDatetime = new \App\Classes\DateTime($a['qualifiers']['P580'][0]['datavalue']['value']['time'] ?? null);
-				$bDatetime = new \App\Classes\DateTime($b['qualifiers']['P580'][0]['datavalue']['value']['time'] ?? null);
+				$aDatetime = new \App\Classes\Time($a['qualifiers']['P580'][0]['datavalue']['value']['time'] ?? null);
+				$bDatetime = new \App\Classes\Time($b['qualifiers']['P580'][0]['datavalue']['value']['time'] ?? null);
 
 				return $aDatetime > $bDatetime ? -1 : 1;
 			});

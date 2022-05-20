@@ -2,7 +2,7 @@
 
 namespace Heimat\Sources\Wikidata;
 
-use Katu\Tools\DateTime\Timeout;
+use Katu\Tools\Calendar\Timeout;
 use Katu\Types\TIdentifier;
 use Katu\Types\TJSON;
 
