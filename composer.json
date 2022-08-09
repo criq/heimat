@@ -8,7 +8,7 @@
 		}
 	},
 	"require": {
-		"criq/fono": "dev-master",
+		"criq/fono": "^4",
 		"criq/katu": "^4"
 	}
 }
