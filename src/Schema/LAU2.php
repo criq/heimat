@@ -124,7 +124,7 @@ class LAU2 extends \Heimat\Schema
 	{
 		return (new TArray($value))->flatten()->map(function ($i) {
 			return static::getFormattedPostalCode($i);
-		})->unique()->natsort()->values()->getArray();
+		})->unique()->sortNaturally()->values()->getArray();
 	}
 
 	public static function extractPostalCodes(string $value): array
