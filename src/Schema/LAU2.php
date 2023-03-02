@@ -98,6 +98,8 @@ class LAU2 extends \Heimat\Schema
 				return null;
 			}
 		}
+
+		return null;
 	}
 
 	public static function getWikidataClass(): string
