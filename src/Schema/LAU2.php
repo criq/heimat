@@ -132,7 +132,7 @@ class LAU2 extends \Heimat\Schema
 	public static function extractPostalCodes(string $value): array
 	{
 		$string = strip_tags($value);
-		$string = (new TString($string))->normalizeSpaces();
+		$string = (new TString($string))->getWithNormalizedSpaces();
 		$string = preg_replace("/&nbsp;/", "", $string);
 
 		$items = preg_split("/(,|\/|\sa\s)/", $string);

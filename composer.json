@@ -9,6 +9,6 @@
 	},
 	"require": {
 		"criq/fono": "^4",
-		"criq/katu": "^4"
+		"criq/katu": "^4.20240130.1"
 	}
 }
